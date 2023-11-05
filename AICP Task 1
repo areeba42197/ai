@@ -1,0 +1,159 @@
+#include <string>
+#include <iostream>
+#include <vector>
+#include <iomanip>
+
+using namespace std;
+
+struct Component {
+    string itemCode;
+    string description;
+    double price;
+};
+
+int main() {
+    
+    Component cases[] = {
+        {"A1", "Compact", 75.00},
+        {"A2", "Tower", 150.00}
+    };
+
+    Component ram[] = {
+        {"B1", "8GB", 79.99},
+        {"B2", "16GB", 149.99},
+        {"B3", "32GB", 299.99}
+    };
+
+    Component hdd[] = {
+        {"C1", "1TB HDD", 49.99},
+        {"C2", "2TB HDD", 89.99},
+        {"C3", "4TB HDD", 129.99}
+    };
+
+    Component selectedCase;
+    Component selectedRAM;
+    Component selectedHDD;
+    double totalPrice = 200.00;
+
+    string itemCode;
+    cout << "Available Case items:" << endl;
+    for (const Component& item : cases) {
+        cout << item.itemCode << " - " << item.description << " ($" << item.price << ")" << endl;
+    }
+    cout << "Select one Case (Enter item code): ";
+    cin >> itemCode;
+    for (const Component& item : cases) {
+        if (item.itemCode == itemCode) {
+            selectedCase = item;
+            totalPrice += item.price;
+            break;
+        }
+    }
+
+    cout << "Available RAM items:" << endl;
+    for (const Component& item : ram) {
+        cout << item.itemCode << " - " << item.description << " ($" << item.price << ")" << endl;
+    }
+    cout << "Select one RAM (Enter item code): ";
+    cin >> itemCode;
+    for (const Component& item : ram) {
+        if (item.itemCode == itemCode) {
+            selectedRAM = item;
+            totalPrice += item.price;
+            break;
+        }
+    }
+
+    cout << "Available Main Hard Disk Drive items:" << endl;
+    for (const Component& item : hdd) {
+        cout << item.itemCode << " - " << item.description << " ($" << item.price << ")" << endl;
+    }
+    cout << "Select one Main Hard Disk Drive (Enter item code): ";
+    cin >> itemCode;
+    for (const Component& item : hdd) {
+        if (item.itemCode == itemCode) {
+            selectedHDD = item;
+            totalPrice += item.price;
+            break;
+        }
+    }
+
+    // Ask if the user wants to buy additional items
+    vector<Component> selectedAdditionalItems;
+    char buyAdditionalItems;
+    cout << "Do you want to buy additional items? (y/n): ";
+    cin >> buyAdditionalItems;
+    if (buyAdditionalItems == 'y' || buyAdditionalItems == 'Y') {
+        // Define available additional components using structures
+        Component ssd[] = {
+            {"D1", "240GB SSD", 59.99},
+            {"D2", "480GB SSD", 119.99}
+        };
+        Component hdd2[] = {
+            {"E1", "1TB HDD", 49.99},
+            {"E2", "2TB HDD", 89.99},
+            {"E3", "4TB HDD", 129.99}
+        };
+        Component opticalDrive[] = {
+            {"F1", "DVD/Blu-Ray Player", 50.00},
+            {"F2", "DVD/Blu-Ray Re-writer", 100.00}
+        };
+        Component os[] = {
+            {"G1", "Standard Version", 100.00},
+            {"G2", "Professional Version", 175.00}
+        };
+
+        vector<Component> validAdditionalItems;
+        validAdditionalItems.insert(validAdditionalItems.end(), ssd, ssd + sizeof(ssd) / sizeof(ssd[0]));
+        validAdditionalItems.insert(validAdditionalItems.end(), hdd2, hdd2 + sizeof(hdd2) / sizeof(hdd2[0]));
+        validAdditionalItems.insert(validAdditionalItems.end(), opticalDrive, opticalDrive + sizeof(opticalDrive) / sizeof(opticalDrive[0]));
+        validAdditionalItems.insert(validAdditionalItems.end(), os, os + sizeof(os) / sizeof(os[0]));
+
+        string additionalItemCode;
+        while (true) {
+            cout << "Available Additional Items:" << endl;
+            for (const Component& item : validAdditionalItems) {
+                cout << item.itemCode << " - " << item.description << " ($" << item.price << ")" << endl;
+            }
+            cout << "Select an additional item (Enter item code) or 'done' to finish: ";
+            cin >> additionalItemCode;
+            if (additionalItemCode == "done") {
+                break;
+            }
+            const Component* item = nullptr;
+            for (const Component& c : validAdditionalItems) {
+                if (c.itemCode == additionalItemCode) {
+                    item = &c;
+                    selectedAdditionalItems.push_back(*item);
+                    totalPrice += item->price;
+                    break;
+                }
+            }
+        }
+    }
+
+   
+    double discount = 0.0;
+    if (selectedAdditionalItems.size() == 1) {
+        discount = 0.05 * totalPrice; // 5% discount
+    } else if (selectedAdditionalItems.size() >= 2) {
+        discount = 0.10 * totalPrice; // 10% discount
+    }
+
+    totalPrice -= discount;
+
+    
+    cout << "Selected items:" << endl;
+    cout << "Case: " << selectedCase.itemCode << " - " << selectedCase.description << endl;
+    cout << "RAM: " << selectedRAM.itemCode << " - " << selectedRAM.description << endl;
+    cout << "Main Hard Disk Drive: " << selectedHDD.itemCode << " - " << selectedHDD.description << endl;
+
+    cout << "Additional Items:" << endl;
+    for (const Component& item : selectedAdditionalItems) {
+        cout << item.itemCode << " - " << item.description << " ($" << item.price << ")" << endl;
+    }
+    
+    cout << "Total Price: $" << fixed << setprecision(2) << totalPrice << endl;
+
+    return 0;
+}
